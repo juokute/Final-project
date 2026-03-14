@@ -9,11 +9,28 @@ class EntryController extends Controller
 {
     public function helloEntry()
     {
-        return Inertia::render('HelloEntry', ['number' => 'No 7']);
+        return Inertia::render('HelloEntry', [
+            'number' => 'No 7',
+            'entriesUrl' => route('get-entries')
+            ]);
     }
 
-    public function helloOldEntry() 
+    public function helloOldEntry()
     {
-        return view('hello_entry', ['number' => 'No 7']);
+        return view('hello_entry', [
+            'number' => 'No 7'
+            ]);
+    }
+
+    public function getEntries()
+    {
+        sleep(3);
+
+        $entries = [];
+
+        return response()->json([
+            'entries' => $entries, 
+            'status' => 'ok'
+            ]);
     }
 }

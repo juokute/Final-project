@@ -28,6 +28,7 @@ Route::get('/', function () {
 
 ROUTE::get('/entry', [E::class, 'helloEntry']);
 ROUTE::get('/old-entry', [E::class, 'helloOldEntry']);
+ROUTE::get('/get-entries', [E::class, 'getEntries'])->name('get-entries');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
