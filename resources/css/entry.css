@@ -2,19 +2,129 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #38220f;
-    color: white;
+    background-color: #f4f6f9;
+    color: #6f6f6f;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: 400;
     min-height: 100vh;
+    margin:40px;
 }
 
 h1 {
     font-size: 45px;
+    font-weight: 500;
+    color: #232323;
     padding: 20px 0;
     text-align: center;
+    margin-bottom: 30px;
 }
 
-button {
+table{
+width: 100%;
+border-collapse: collapse;
+background: white;
+box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+th{
+background:#2c3e50;
+color:white;
+padding:12px;
+font-weight:600;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid #eee;
+vertical-align:top;
+text-align: center;
+}
+
+td.stories-td {
+    text-align:left;
+}
+
+tr:hover{
+background:#f9fbff;
+}
+
+img.main{
+width: 120px;
+border-radius: 6px;
+margin: 0 3px 3px 3px;
+}
+
+a {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.gallery img{
+    width: 53px;
+    height: 53px;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+.progress{
+height:8px;
+background:#ddd;
+border-radius:4px;
+margin-top:6px;
+}
+
+.progress-bar{
+height:8px;
+background:#27ae60;
+border-radius:4px;
+}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.like-btn{
+background:#f5b2d7;
+color:white;
+width: 71px;
+margin-top: 15px;
+}
+
+.donate-btn{
+background:#3498db;
+color:white;
+margin-top:4px;
+}
+
+input[type=number]{
+width:70px;
+padding:4px;
+border-radius: 5px;
+border: 1px solid rgb(165, 165, 165);
+}
+
+input::placeholder {
+    text-align: right;
+}
+
+ul{
+padding-left:15px;
+margin:0;
+font-size:13px;
+}
+
+.tags{
+color:#888;
+font-size:13px;
+}
+
+
+/* button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -165,4 +275,5 @@ select:focus {
     to {
         transform: rotate(360deg);
     }
-}
+} */
+

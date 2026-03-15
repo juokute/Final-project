@@ -33,4 +33,12 @@ class EntryController extends Controller
             'status' => 'ok'
             ]);
     }
+
+
+            // public function addLike()
+            // {
+            // let likes=document.getElementById("likes");
+            // likes.innerText=parseInt(likes.innerText)+1;
+            // }
+
 }
