@@ -10,26 +10,34 @@ import { Head } from '@inertiajs/react';
 
 export default function HelloEntry({number, entriesUrl}) {
 
-    const [likes, setLikes] = useState(12);
+    const [likes, setLikes] = useState(0);
     const [sq, setSq] = useState(null);
 
     useEffect(_ => {
-        // console.log('Kreipiuosi į serverį adresu: ' + entriesUrl);
-        axios.get(entriesUrl)
-        .then(res => {
-            const entriesFromServer = res.data.entries;
-            setSq(entriesFromServer);
-        })
-        .catch(e => console.log(e))
-    }, []);
+        if (!entriesUrl) return;
 
-      const addSq = (_) => {
-        const number = rand(1000, 9999);
-        const color = randColor();
-        const id = rand(100000000, 999999999);
+            axios.get(entriesUrl)
+                .then(res => setSq(res.data.entries))
+                .catch(e => console.log(e));
+
+
+
+        // console.log('Kreipiuosi į serverį adresu: ' + entriesUrl);
+    //     axios.get(entriesUrl)
+    //     .then(res => {
+    //         const entriesFromServer = res.data.entries;
+    //         setSq(entriesFromServer);
+    //     })
+    //     .catch(e => console.log(e))
+    }, [entriesUrl]);
+
+    //   const addSq = (_) => {
+    //     const number = rand(1000, 9999);
+    //     const color = randColor();
+    //     const id = rand(100000000, 999999999);
     
-        setSq((s) => [...s, { number, color, id }]);
-      };
+    //     setSq((s) => [...s, { number, color, id }]);
+    //   };
 
     if (sq === null) {
 
@@ -68,18 +76,19 @@ export default function HelloEntry({number, entriesUrl}) {
                 </thead>
 
                 <tbody>
-                    <tr>
+                    {sq.map(story => (
+                    
+                    <tr key={story.id}>
                         
-
-                        <td className='stories-td'>
-                        Ekologiškos fermos edukacinis centras.
-                        Vieta kur vaikai galės susipažinti su gyvuliais ir ūkininkavimu.
-                        </td>
+                        <td className='stories-td'>{story.text}</td>
 
 
-                        <td className='gallery-container' style={{width: '150px'}}>
+                        <td className='gallery-container'>
 
-                            <img className="main" src="https://picsum.photos/200/120"/>
+                            {story.title_photo && (
+
+                            <img className="main" src={story.title_photo} alt="Title" style={{width: '150px'}}/>
+                            )}
 
                             <div className="gallery">
                                 <a href="galerija.html">
@@ -93,15 +102,15 @@ export default function HelloEntry({number, entriesUrl}) {
                         </td>
 
 
-                        <td>10000,00</td>
+                        <td>{story.required_amount}</td>
 
-                        <td>3500,00
+                        <td>0
                             <div className="progress">
                                 <div className="progress-bar" style={{width: '35%'}}></div>
                             </div>
                         </td>
 
-                        <td>6500,00</td>
+                        <td>{story.required_amount}</td>
 
 
                         <td>
@@ -148,6 +157,7 @@ export default function HelloEntry({number, entriesUrl}) {
                         </td>
 
                     </tr>
+                    ))}
                 </tbody>
             </table>
 

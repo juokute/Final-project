@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EntryController as E;
+use App\Http\Controllers\StoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,9 +27,13 @@ Route::get('/', function () {
     ]);
 });
 
-ROUTE::get('/home', [E::class, 'helloEntry']);
+// ROUTE::get('/home', [E::class, 'helloEntry']);
 ROUTE::get('/old-entry', [E::class, 'helloOldEntry']);
 ROUTE::get('/get-entries', [E::class, 'getEntries'])->name('get-entries');
+Route::get('/home', [StoryController::class, 'index'])->name('home'); // React pusė
+Route::get('/api/stories', [StoryController::class, 'getStories'])->name('get-stories'); // Axios duomenims
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
