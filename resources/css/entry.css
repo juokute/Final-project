@@ -50,11 +50,11 @@ td.stories-td {
 }
 
 tr:hover{
-background:#f9fbff;
+background:#f1f5fd;
 }
 
-img.main{
-width: 120px;
+.gallery-container .main{
+min-width: 120px;
 border-radius: 6px;
 margin: 0 3px 3px 3px;
 }

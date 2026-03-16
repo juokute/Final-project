@@ -87,7 +87,7 @@ export default function HelloEntry({number, entriesUrl}) {
 
                             {story.title_photo && (
 
-                            <img className="main" src={story.title_photo} alt="Title" style={{width: '150px'}}/>
+                            <img className="main" src={story.title_photo} alt="Title"/>
                             )}
 
                             <div className="gallery">
@@ -104,7 +104,7 @@ export default function HelloEntry({number, entriesUrl}) {
 
                         <td>{story.required_amount}</td>
 
-                        <td>0
+                        <td className='amount-collected'>0
                             <div className="progress">
                                 <div className="progress-bar" style={{width: '35%'}}></div>
                             </div>
