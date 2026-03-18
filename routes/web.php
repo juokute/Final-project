@@ -27,12 +27,13 @@ Route::get('/', function () {
     ]);
 });
 
-// ROUTE::get('/home', [E::class, 'helloEntry']);
+
 ROUTE::get('/old-entry', [E::class, 'helloOldEntry']);
 ROUTE::get('/get-entries', [E::class, 'getEntries'])->name('get-entries');
 Route::get('/home', [StoryController::class, 'index'])->name('home'); // React pusė
 Route::get('/api/stories', [StoryController::class, 'getStories'])->name('get-stories'); // Axios duomenims
 
+ROUTE::get('/story', [StoryController::class, 'newStory']);
 
 
 Route::get('/dashboard', function () {

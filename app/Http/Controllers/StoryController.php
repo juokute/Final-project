@@ -8,6 +8,11 @@ use Inertia\Inertia;
 
 class StoryController extends Controller
 {
+    public function newStory()  
+    {
+        return Inertia::render('NewStory');
+    } 
+
     public function index()
     {
         $stories = Story::all(); // gauni visus stulpelius
