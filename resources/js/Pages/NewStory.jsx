@@ -26,17 +26,15 @@ export default function NewStory() {
                 </div>
                 <div className="new-story-hash-tag">
                     <label>#hash-tag</label>
-                    <input
-                        type="text"
-                        placeholder="List the keywords..."
-                    />
+                    <input type="text" placeholder="List the keywords..." />
                 </div>
                 <div className="new-story-amount">
-                    <label>Target Amount</label>
-                    <input
-                        type="number"
-                        placeholder="Enter amount..."
-                    />
+                    <label>Target Amount €</label>
+                    <input type="number" placeholder="Enter amount..." />
+                </div>
+                <div className="new-story-buttons">
+                    <button className="btn new-story-button-save" type="button">Save</button>
+                    <button className="btn new-story-button-cancel" type="button">Cancel</button>
                 </div>
             </div>
         </>

@@ -119,7 +119,7 @@ export default function HelloEntry({number, entriesUrl}) {
 
                             <br/>
 
-                            <button className="like-btn" onClick={addLike}>
+                            <button className="btn-list like-btn" onClick={addLike}>
                              +❤️
                             </button>
 
@@ -143,7 +143,7 @@ export default function HelloEntry({number, entriesUrl}) {
 
                             <br/>
 
-                            <button className="donate-btn">
+                            <button className="btn-list donate-btn">
                             Donate
                             </button>
 

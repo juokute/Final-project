@@ -4,8 +4,9 @@
 
 body {
     background-color: #f5f7fb;
-    font-family: "Inter", "Segoe UI", sans-serif;
+    font-family: GoFundMe Sans, Trebuchet, Helvetica, Arial, sans-serif;
     color: #1a1a1a;
+    font-size: 1rem;
 }
 
 .layout {
@@ -71,6 +72,8 @@ textarea {
     font-size: 14px;
     transition: all 0.2s ease;
     background: #fafafa;
+    color: #686868;
+    font-family: GoFundMe Sans, Trebuchet, Helvetica, Arial, sans-serif;
 }
 
 input:focus,
@@ -89,10 +92,15 @@ textarea {
 input[type="file"] {
     padding: 10px;
     background: #fff;
+    
 }
 
-.new-story-title input {
-  /* text-align: left; */
+div.new-story-amount input {
+    width: 200px;
+    height: 42px;
+    border: 1px solid #dcdfe6; /* tas pats border kaip visuose */
+    border-radius: 10px; /* tas pats radius */
+    padding: 12px 14px;
 }
 
 img {
@@ -104,8 +112,61 @@ img {
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    /* -webkit-appearance: none; */
     margin: 0;
+}
+
+div.new-story-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: nowrap;
+}
+
+.btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: auto;
+    min-width: 100px;
+}
+
+.new-story-button-save {
+    background: #6366f1;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.new-story-button-save:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+}
+
+.new-story-button-save:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+.new-story-button-cancel {
+    background: #f1f3f9;
+    color: #444;
+}
+
+.new-story-button-cancel:hover {
+    background: #e4e7f2;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -184,7 +245,7 @@ a {
     border-radius: 4px;
 }
 
-button {
+.btn-list {
     padding: 6px 10px;
     border: none;
     border-radius: 5px;
@@ -211,19 +272,15 @@ input[type="number"] {
     border: 1px solid rgb(165, 165, 165);
 }
 
-input::placeholder {
-    text-align: right;
-}
-
 ul {
     padding-left: 15px;
     margin: 0;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .tags {
     color: #888;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* button {
