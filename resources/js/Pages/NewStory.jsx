@@ -1,6 +1,19 @@
+import { useState } from "react";
 import "../../css/entry.css";
 
 export default function NewStory() {
+
+    const [str, setStr] = useState(null);
+
+    if (str === null) {
+        return (
+            <div className="new-story-container">
+                <span class="loader"></span>
+            </div>
+        )
+    }
+
+
     return (
         <>
             <h1 className="new-story-h1">Creat Your Story!</h1>
