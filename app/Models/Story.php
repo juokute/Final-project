@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\HashTag;
 
 class Story extends Model
 {
@@ -10,6 +11,7 @@ class Story extends Model
 
     // Stulpeliai, su kuriais dirbsi Laravel pusėje
     protected $fillable = [
+        'title',
         'text',
         'title_photo',
         'photos',
@@ -18,6 +20,11 @@ class Story extends Model
     ];
 
     protected $casts = [
-    'photos' => 'array',
-];
+        'photos' => 'array',
+    ];
+
+    public function hashTags()
+{
+    return $this->hasMany(HashTag::class);
+}
 }
