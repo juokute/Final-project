@@ -59,6 +59,18 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route("home")}
+                                    active={route().current("home")}
+                                >
+                                    Discover
+                                </NavLink>
+                                <NavLink
+                                    href={route("story")}
+                                    active={route().current("story")}
+                                >
+                                    Create Your Story
+                                </NavLink>
                             </div>
                         </div>
 

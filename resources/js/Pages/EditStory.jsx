@@ -9,12 +9,12 @@ import { Head } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function NewStory({ storiesUrl }) {
+export default function EditStory({ story, allTags }) {
     const { auth, errors = {}, allTags } = usePage().props;
     const [localErrors, setLocalErrors] = useState({});
     const user = auth?.user || null;
     const [loading, setLoading] = useState(false);
-    const [selectedTags, setSelectedTags] = useState([]);
+    // const [selectedTags, setSelectedTags] = useState([]);
     const [newTag, setNewTag] = useState("");
 
     // useEffect(() => {
@@ -26,12 +26,16 @@ export default function NewStory({ storiesUrl }) {
     }, [errors]);
 
     const [str, setStr] = useState({
-        title: "",
-        text: "",
+        title: story.title || "",
+        text: story.text || "",
         title_photo: null,
         photos: [],
-        required_amount: "",
+        required_amount: story.required_amount || "",
     });
+
+    const [selectedTags, setSelectedTags] = useState(
+        story.hash_tags?.map((t) => t.hash_tag) || [],
+    );
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -64,13 +68,13 @@ export default function NewStory({ storiesUrl }) {
             ...prev,
             photos: Array.from(e.target.files),
         }));
-    //     setLocalErrors((prev) => ({
-    //     ...prev,
-    //     photos: null,
-    // }));
+        //     setLocalErrors((prev) => ({
+        //     ...prev,
+        //     photos: null,
+        // }));
     };
 
-    const addStr = (_) => {
+    const updateStr = (_) => {
         setLoading(true);
 
         const data = new FormData();
@@ -78,6 +82,7 @@ export default function NewStory({ storiesUrl }) {
         data.append("title", str.title);
         data.append("text", str.text);
         data.append("required_amount", str.required_amount);
+
         selectedTags.forEach((tag, index) => {
             data.append(`hash_tags[${index}]`, tag);
         });
@@ -90,10 +95,9 @@ export default function NewStory({ storiesUrl }) {
             data.append(`photos[${index}]`, photo);
         });
 
-        // Laravel POST
-        router.post("/stories", data, {
+        router.post(`/stories/${story.id}`, data, {
             forceFormData: true,
-            onFinish: () => setLoading(false),
+            _method: "put",
         });
     };
 

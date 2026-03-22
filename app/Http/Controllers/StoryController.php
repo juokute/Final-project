@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HashTag;
 use Illuminate\Http\Request;
 use App\Models\Story;
 use Inertia\Inertia;
@@ -12,8 +13,11 @@ class StoryController extends Controller
 {
     public function newStory()
     {
+        $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
+
         return Inertia::render('NewStory', [
-            'storiesUrl' => route('get-stories')
+            'storiesUrl' => route('get-stories'),
+            'allTags' => $tags
         ]);
     }
 
@@ -46,7 +50,8 @@ class StoryController extends Controller
             'required_amount' => 'required|numeric|min:1',
             'title_photo' => 'required|image',
             'photos.*' => 'nullable|image',
-            'hash_tag' => 'required|string',
+            'hash_tags' => 'required|array|min:1',
+            'hash_tags.*' => 'string|max:50',
         ]);
 
         $photos = [];
@@ -66,20 +71,25 @@ class StoryController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        $tags = explode(' ', $request->hash_tag);
-
-        foreach ($tags as $tag) {
-            if (!empty($tag)) {
-                DB::table('hash_tags')->insert([
-                    'story_id' => $story->id,
-                    'hash_tag' => $tag,
-                ]);
-            }
+        foreach ($request->hash_tags as $tag) {
+            DB::table('hash_tags')->insert([
+                'story_id' => $story->id,
+                'hash_tag' => $tag,
+            ]);
         }
+
 
 
         return redirect()
             ->route('home')
             ->with('success', 'Story created successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $story = \App\Models\Story::findOrFail($id);
+        $story->delete();
+
+        return redirect()->back()->with('success', 'Story deleted!');
     }
 }

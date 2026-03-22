@@ -28,14 +28,21 @@ Route::get('/', function () {
 });
 
 
+
 ROUTE::get('/old-entry', [E::class, 'helloOldEntry']);
 ROUTE::get('/get-entries', [E::class, 'getEntries'])->name('get-entries');
-Route::get('/home', [StoryController::class, 'index'])->name('home'); // React pusė
 Route::get('/api/stories', [StoryController::class, 'getStories'])->name('api.stories'); // Axios duomenims
 
-ROUTE::get('/story', [StoryController::class, 'newStory']);
-Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
+
 ROUTE::get('/get-stories', [StoryController::class, 'getStories'])->name('get-stories');
+
+Route::get('/home', [StoryController::class, 'index'])->name('home');
+ROUTE::get('/story', [StoryController::class, 'newStory'])->name('story');
+Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
+Route::delete('/stories/{id}', [StoryController::class, 'destroy'])->name('stories.destroy');
+Route::put('/stories/{id}', [StoryController::class, 'update'])->name('stories.update');
+Route::get('/stories/{id}/edit', [StoryController::class, 'edit'])->name('stories.edit');
+
 
 
 Route::get('/dashboard', function () {
@@ -48,4 +55,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+
+
+require __DIR__ . '/auth.php';
