@@ -10,7 +10,7 @@ import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function EditStory({ story, allTags }) {
-    const { auth, errors = {}, allTags } = usePage().props;
+    const { auth, errors = {} } = usePage().props;
     const [localErrors, setLocalErrors] = useState({});
     const user = auth?.user || null;
     const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ export default function EditStory({ story, allTags }) {
     const [str, setStr] = useState({
         title: story.title || "",
         text: story.text || "",
-        title_photo: null,
-        photos: [],
+        title_photo: story.title_photo || null,
+        photos: story.photos || [],
         required_amount: story.required_amount || "",
     });
 
@@ -64,20 +64,20 @@ export default function EditStory({ story, allTags }) {
     };
 
     const handlePhotosChange = (e) => {
+        const files = Array.from(e.target.files);
+
         setStr((prev) => ({
             ...prev,
-            photos: Array.from(e.target.files),
+            photos: [...(prev.photos || []), ...files],
         }));
-        //     setLocalErrors((prev) => ({
-        //     ...prev,
-        //     photos: null,
-        // }));
     };
 
     const updateStr = (_) => {
         setLoading(true);
 
         const data = new FormData();
+
+        data.append("_method", "put");
 
         data.append("title", str.title);
         data.append("text", str.text);
@@ -87,23 +87,38 @@ export default function EditStory({ story, allTags }) {
             data.append(`hash_tags[${index}]`, tag);
         });
 
-        if (str.title_photo) {
+        if (str.title_photo instanceof File) {
             data.append("title_photo", str.title_photo);
         }
 
+        if (str.title_photo === null) {
+            data.append("remove_title_photo", 1);
+        }
+
+        const existingPhotos = str.photos.filter(
+            (photo) => !(photo instanceof File),
+        );
+
+        data.append("existing_photos", JSON.stringify(existingPhotos));
+
         str.photos.forEach((photo, index) => {
-            data.append(`photos[${index}]`, photo);
+            if (photo instanceof File) {
+                data.append(`photos[${index}]`, photo);
+            }
         });
 
         router.post(`/stories/${story.id}`, data, {
             forceFormData: true,
-            _method: "put",
+            onSuccess: () => {
+                router.visit("/home");
+            },
+            onFinish: () => setLoading(false),
         });
     };
 
     return (
         <AuthenticatedLayout user={user}>
-            <Head title="Create Your Story!" />
+            <Head title="Improve Your Story!" />
             {loading ? (
                 <div className="loader-container">
                     <div className="loader">
@@ -112,10 +127,11 @@ export default function EditStory({ story, allTags }) {
                 </div>
             ) : (
                 <>
-                    <h1 className="new-story-h1">Create Your Story!</h1>
+                    <h1 className="new-story-h1">Improve Your Story!</h1>
                     <div className="new-story-container">
                         <Str
                             str={str}
+                            setStr={setStr}
                             handleChange={handleChange}
                             handleFileChange={handleFileChange}
                             handlePhotosChange={handlePhotosChange}
@@ -130,7 +146,7 @@ export default function EditStory({ story, allTags }) {
                         <div className="new-story-buttons">
                             <button
                                 className="btn new-story-button-save"
-                                onClick={addStr}
+                                onClick={updateStr}
                                 type="button"
                             >
                                 Save

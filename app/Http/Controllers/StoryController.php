@@ -92,4 +92,85 @@ class StoryController extends Controller
 
         return redirect()->back()->with('success', 'Story deleted!');
     }
+
+    public function edit($id)
+    {
+        $story = Story::with('hashTags')->findOrFail($id);
+
+        $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
+
+        return Inertia::render('EditStory', [
+            'story' => $story,
+            'allTags' => $tags,
+        ]);
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $story = Story::findOrFail($id);
+
+        // 🔒 apsauga (labai svarbu)
+        if ($story->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // ✅ validacija
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'text' => 'required|string',
+            'required_amount' => 'required|numeric|min:1',
+            'title_photo' => 'nullable|image',
+            'photos.*' => 'nullable|image',
+            'hash_tags' => 'required|array|min:1',
+            'hash_tags.*' => 'string|max:50',
+        ]);
+
+        if ($request->has('remove_title_photo')) {
+            $story->title_photo = null;
+        }
+
+        // 📸 title photo update
+        if ($request->hasFile('title_photo')) {
+            $story->title_photo = $request->file('title_photo')->store('photos', 'public');
+        }
+
+        // 🔥 pasiimam tik tas, kurias frontend paliko
+        $existingPhotos = [];
+
+        if ($request->has('existing_photos')) {
+            $existingPhotos = json_decode($request->input('existing_photos'), true) ?? [];
+        }
+
+        $photos = $existingPhotos;
+
+        // ➕ pridedam naujas
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $photos[] = $photo->store('photos', 'public');
+            }
+        }
+
+        // 🧠 update pagrindiniai duomenys
+        $story->title = $request->title;
+        $story->text = $request->text;
+        $story->required_amount = $request->required_amount;
+        $story->photos = $photos;
+
+        $story->save();
+
+        // 🏷️ atnaujinam tagus (ištrinam senus)
+        DB::table('hash_tags')->where('story_id', $story->id)->delete();
+
+        foreach ($request->hash_tags as $tag) {
+            DB::table('hash_tags')->insert([
+                'story_id' => $story->id,
+                'hash_tag' => $tag,
+            ]);
+        }
+
+        return redirect()
+            ->route('home')
+            ->with('success', 'Story updated successfully!');
+    }
 }

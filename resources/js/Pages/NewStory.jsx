@@ -112,6 +112,7 @@ export default function NewStory({ storiesUrl }) {
                     <div className="new-story-container">
                         <Str
                             str={str}
+                            setStr={setStr}
                             handleChange={handleChange}
                             handleFileChange={handleFileChange}
                             handlePhotosChange={handlePhotosChange}

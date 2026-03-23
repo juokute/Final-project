@@ -1,5 +1,8 @@
+import { useRef } from "react";
+
 export default function Str({
     str,
+    setStr,
     handleChange,
     handleFileChange,
     handlePhotosChange,
@@ -10,6 +13,8 @@ export default function Str({
     setNewTag,
     allTags,
 }) {
+    const fileInputRef = useRef(null);
+
     return (
         // <div className="kvadratas" style={{
         //     backgroundColor: sq.color + '77',
@@ -46,17 +51,40 @@ export default function Str({
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
+                    ref={fileInputRef}
                     className={errors.title_photo ? "input-error" : ""}
                 />
                 {errors.title_photo && (
                     <div className="error">{errors.title_photo}</div>
                 )}
-                {str.title_photo && typeof str.title_photo === "object" ? (
-                    <img src={URL.createObjectURL(str.title_photo)} />
-                ) : (
-                    str.title_photo && (
-                        <img src={`/storage/${str.title_photo}`} />
-                    )
+                {str.title_photo && (
+                    <div>
+                        <img
+                            className="x-img"
+                            src={
+                                str.title_photo instanceof File
+                                    ? URL.createObjectURL(str.title_photo)
+                                    : `/storage/${str.title_photo}`
+                            }
+                        />
+
+                        <button
+                            className="x-button"
+                            type="button"
+                            onClick={() => {
+                                setStr((prev) => ({
+                                    ...prev,
+                                    title_photo: null,
+                                }));
+
+                                if (fileInputRef.current) {
+                                    fileInputRef.current.value = null;
+                                }
+                            }}
+                        >
+                            X
+                        </button>
+                    </div>
                 )}
             </div>
             <div className="new-story-photo">
@@ -67,9 +95,37 @@ export default function Str({
                     multiple
                     onChange={handlePhotosChange}
                 />
-                {str.photos?.map((photo, i) => (
-                    <img key={i} src={URL.createObjectURL(photo)} />
-                ))}
+                <div>
+                    {str.photos?.map((photo, i) => {
+                        if (!photo) return null;
+
+                        const src =
+                            typeof photo === "string"
+                                ? `/storage/${photo}`
+                                : URL.createObjectURL(photo);
+
+                        return (
+                            <div key={i} className="photo-wrapper">
+                                <img src={src} />
+
+                                <button
+                                    className="x-button"
+                                    type="button"
+                                    onClick={() => {
+                                        setStr((prev) => ({
+                                            ...prev,
+                                            photos: prev.photos.filter(
+                                                (_, index) => index !== i,
+                                            ),
+                                        }));
+                                    }}
+                                >
+                                    X
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
             <div className="new-story-hash-tag">
                 {/* <label>#hash-tag</label> */}
@@ -150,9 +206,21 @@ export default function Str({
                 {/* SELECTED TAGS PREVIEW */}
                 <div style={{ marginTop: "10px" }}>
                     {selectedTags.map((tag) => (
-                        <span key={tag} style={{ marginRight: "8px" }}>
-                            #{tag}
-                        </span>
+                        <div key={tag} className="tag-item">
+                            <span>#{tag}</span>
+
+                            <button
+                                type="button"
+                                className="x-button"
+                                onClick={() =>
+                                    setSelectedTags(
+                                        selectedTags.filter((t) => t !== tag),
+                                    )
+                                }
+                            >
+                                X
+                            </button>
+                        </div>
                     ))}
                 </div>
             </div>
