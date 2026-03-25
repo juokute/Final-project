@@ -5,7 +5,6 @@ import axios from "axios";
 import { Head } from "@inertiajs/react";
 import { usePage } from "@inertiajs/react";
 import StoryCard from "@/Components/StoryCard";
-
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function HelloEntry({ number, entriesUrl }) {
@@ -28,11 +27,13 @@ export default function HelloEntry({ number, entriesUrl }) {
 
     if (sq === null) {
         return (
-            <div className="loader-container">
-                <div className="loader">
-                    <span></span>
+            <AuthenticatedLayout user={user}>
+                <div className="loader-container">
+                    <div className="loader">
+                        <span></span>
+                    </div>
                 </div>
-            </div>
+            </AuthenticatedLayout>
         );
     }
 
@@ -69,8 +70,6 @@ export default function HelloEntry({ number, entriesUrl }) {
                                 />
                             </tbody>
                         </table>
-
-                       
                     </div>
                 ) : (
                     <>
@@ -92,7 +91,9 @@ export default function HelloEntry({ number, entriesUrl }) {
                                     <StoryCard
                                         key={story.id}
                                         story={story}
-                                        onPreview={setPreviewStory}
+                                        onPreview={(story) =>
+                                            router.visit(`/stories/${story.id}`)
+                                        }
                                         onEdit={(story) =>
                                             router.visit(
                                                 `/stories/${story.id}/edit`,

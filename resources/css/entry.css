@@ -764,3 +764,35 @@ ul {
     border: 1px solid #393b83d3;
     border-radius: 7px;
 }
+
+.read-more {
+    color: #4c4fadd3;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.read-more:hover {
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.alert.success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.alert.error {
+    background: #fee2e2;
+    color: #7f1d1d;
+}
+
+.like-btn.hearted {
+    color: #e63946;
+    border-color: #e63946;
+}

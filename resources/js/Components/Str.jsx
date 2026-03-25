@@ -16,10 +16,7 @@ export default function Str({
     const fileInputRef = useRef(null);
 
     return (
-        // <div className="kvadratas" style={{
-        //     backgroundColor: sq.color + '77',
-        //     borderColor: sq.color
-        // }}>{sq.number}</div>
+
 
         <div className="new-story-container-str">
             <div className="new-story-title">

@@ -8,6 +8,7 @@ use App\Models\Story;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Donation;
 
 class StoryController extends Controller
 {
@@ -33,12 +34,65 @@ class StoryController extends Controller
     {
         sleep(2);
 
-        // $stories = Story::all();
-        $stories = Story::with('hashTags')->get();
+        $userId = Auth::id();
+
+        $stories = Story::with('hashTags')->get()->map(function ($story) use ($userId) {
+            $totalDonated = DB::table('donations')->where('story_id', $story->id)->sum('donated_amount');
+            $story->total_donated = $totalDonated;
+            $story->percent = $story->required_amount > 0
+                ? min(($totalDonated / $story->required_amount) * 100, 100)
+                : 0;
+            $story->recent_donations = DB::table('donations')
+                ->join('users', 'donations.user_id', '=', 'users.id')
+                ->where('donations.story_id', $story->id)
+                ->select('users.name', 'donations.donated_amount as amount')
+                ->orderBy('donations.id', 'desc')
+                ->take(3)
+                ->get();
+
+            $story->heart_count = DB::table('hearts')->where('story_id', $story->id)->count();
+            $story->hearted = $userId
+                ? DB::table('hearts')->where('story_id', $story->id)->where('user_id', $userId)->exists()
+                : false;
+            return $story;
+        });
 
         return response()->json([
             'stories' => $stories,
             'status' => 'ok'
+        ]);
+    }
+
+    public function donate(Request $request, $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        Donation::create([
+            'user_id' => Auth::id(),
+            'story_id' => $id,
+            'donated_amount' => $request->amount,
+        ]);
+
+        $story = Story::findOrFail($id);
+        $totalDonated = Donation::where('story_id', $id)->sum('donated_amount');
+        $percent = $story->required_amount > 0
+            ? min(($totalDonated / $story->required_amount) * 100, 100)
+            : 0;
+
+        $recentDonations = DB::table('donations')
+            ->join('users', 'donations.user_id', '=', 'users.id')
+            ->where('donations.story_id', $id)
+            ->select('users.name', 'donations.donated_amount as amount')
+            ->orderBy('donations.id', 'desc')
+            ->take(3)
+            ->get();
+
+        return response()->json([
+            'total_donated' => $totalDonated,
+            'percent' => $percent,
+            'recent_donations' => $recentDonations,
         ]);
     }
 
@@ -169,8 +223,48 @@ class StoryController extends Controller
             ]);
         }
 
+
+
         return redirect()
             ->route('home')
             ->with('success', 'Story updated successfully!');
+    }
+
+    public function show($id)
+    {
+        $story = Story::with('hashTags')->findOrFail($id);
+
+        return Inertia::render('StoryPreview', [
+            'story' => $story,
+        ]);
+    }
+
+
+    public function toggleHeart(Request $request, $id)
+    {
+        $userId = Auth::id();
+
+        $existing = DB::table('hearts')
+            ->where('user_id', $userId)
+            ->where('story_id', $id)
+            ->first();
+
+        if ($existing) {
+            DB::table('hearts')
+                ->where('user_id', $userId)
+                ->where('story_id', $id)
+                ->delete();
+            $hearted = false;
+        } else {
+            DB::table('hearts')->insert([
+                'user_id' => $userId,
+                'story_id' => $id,
+            ]);
+            $hearted = true;
+        }
+
+        $count = DB::table('hearts')->where('story_id', $id)->count();
+
+        return response()->json(['hearted' => $hearted, 'count' => $count]);
     }
 }

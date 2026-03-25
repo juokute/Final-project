@@ -38,10 +38,17 @@ ROUTE::get('/get-stories', [StoryController::class, 'getStories'])->name('get-st
 
 Route::get('/home', [StoryController::class, 'index'])->name('home');
 ROUTE::get('/story', [StoryController::class, 'newStory'])->name('story');
+Route::get('/stories/{id}', [StoryController::class, 'show'])->name('stories.show');
 Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
 Route::delete('/stories/{id}', [StoryController::class, 'destroy'])->name('stories.destroy');
 Route::put('/stories/{id}', [StoryController::class, 'update'])->name('stories.update');
 Route::get('/stories/{id}/edit', [StoryController::class, 'edit'])->name('stories.edit');
+Route::post('/stories/{id}/heart', [StoryController::class, 'toggleHeart'])
+    ->middleware('auth')
+    ->name('stories.heart');
+Route::post('/stories/{id}/donate', [StoryController::class, 'donate'])
+    ->middleware('auth')
+    ->name('stories.donate');
 
 
 

@@ -24,7 +24,12 @@ class Story extends Model
     ];
 
     public function hashTags()
-{
-    return $this->hasMany(HashTag::class);
-}
+    {
+        return $this->hasMany(HashTag::class);
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
 }

@@ -109,8 +109,10 @@ export default function EditStory({ story, allTags }) {
 
         router.post(`/stories/${story.id}`, data, {
             forceFormData: true,
+            preserveScroll: false,
+            preserveState: false,
             onSuccess: () => {
-                router.visit("/home");
+                // router.visit("/home");
             },
             onFinish: () => setLoading(false),
         });
