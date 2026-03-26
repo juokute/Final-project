@@ -6,12 +6,25 @@ import { Link } from "@inertiajs/react";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    const { flash } = usePage().props;
+    const { flash, auth } = usePage().props;
     const [show, setShow] = useState(false);
+
+    const user = auth?.user || null;
+    const hasStory = auth?.hasStory || false;
+    const isAdmin = auth?.isAdmin || false;
+
+    // Navigacijoje:
+    {
+        isAdmin && (
+            <NavLink href={route("admin")} active={route().current("admin")}>
+                Admin
+            </NavLink>
+        );
+    }
 
     useEffect(() => {
         if (flash?.success) {
@@ -65,12 +78,16 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Discover
                                 </NavLink>
-                                <NavLink
-                                    href={route("story")}
-                                    active={route().current("story")}
-                                >
-                                    Create Your Story
-                                </NavLink>
+                                {user && (
+                                    <NavLink
+                                        href={route("story")}
+                                        active={route().current("story")}
+                                    >
+                                        {hasStory
+                                            ? "Your Story"
+                                            : "Create Your Story"}
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 

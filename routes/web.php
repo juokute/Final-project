@@ -37,7 +37,9 @@ Route::get('/api/stories', [StoryController::class, 'getStories'])->name('api.st
 ROUTE::get('/get-stories', [StoryController::class, 'getStories'])->name('get-stories');
 
 Route::get('/home', [StoryController::class, 'index'])->name('home');
-ROUTE::get('/story', [StoryController::class, 'newStory'])->name('story');
+Route::get('/story', [StoryController::class, 'newStory'])
+    ->middleware('auth')
+    ->name('story');
 Route::get('/stories/{id}', [StoryController::class, 'show'])->name('stories.show');
 Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
 Route::delete('/stories/{id}', [StoryController::class, 'destroy'])->name('stories.destroy');
@@ -49,6 +51,8 @@ Route::post('/stories/{id}/heart', [StoryController::class, 'toggleHeart'])
 Route::post('/stories/{id}/donate', [StoryController::class, 'donate'])
     ->middleware('auth')
     ->name('stories.donate');
+Route::get('/stories/{id}/donations', [StoryController::class, 'getDonations'])->name('stories.donations');
+Route::get('/stories/{id}/donations/top', [StoryController::class, 'getTopDonors'])->name('stories.donations.top');
 
 
 
@@ -57,9 +61,11 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/admin', [StoryController::class, 'adminPanel'])->name('admin');
+    Route::post('/stories/{id}/approve', [StoryController::class, 'approveStory'])->name('stories.approve');
+    Route::post('/stories/{id}/reject', [StoryController::class, 'rejectStory'])->name('stories.reject');
+    Route::post('/admin/tags', [StoryController::class, 'storeTag'])->name('admin.tags.store');
+    Route::delete('/admin/tags', [StoryController::class, 'destroyTag'])->name('admin.tags.destroy');
 });
 
 

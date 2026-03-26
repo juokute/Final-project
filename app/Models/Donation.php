@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Donation extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = ['user_id', 'story_id', 'donated_amount'];
 
     public function user()

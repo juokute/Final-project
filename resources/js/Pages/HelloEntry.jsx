@@ -12,6 +12,7 @@ export default function HelloEntry({ number, entriesUrl }) {
     const { auth } = usePage().props;
     const user = auth?.user || null;
     const [previewStory, setPreviewStory] = useState(null);
+    const [confirmId, setConfirmId] = useState(null);
 
     useEffect(
         (_) => {
@@ -38,18 +39,18 @@ export default function HelloEntry({ number, entriesUrl }) {
     }
 
     const remove = (id) => {
-        const confirmed = window.confirm(
-            "⚠️ Are you sure you want to delete this story? This action cannot be undone.",
-        );
+        setConfirmId(id); // ← vietoj window.confirm
+    };
 
-        if (!confirmed) return;
-
-        router.delete(`/stories/${id}`, {
+    const confirmDelete = () => {
+        router.delete(`/stories/${confirmId}`, {
             onSuccess: () => {
-                setSq((old) => old.filter((s) => s.id !== id));
+                setSq((old) => old.filter((s) => s.id !== confirmId));
+                setConfirmId(null);
             },
             onError: (err) => {
                 console.log(err);
+                setConfirmId(null);
             },
         });
     };
@@ -107,6 +108,31 @@ export default function HelloEntry({ number, entriesUrl }) {
                     </>
                 )}
             </div>
+            {confirmId && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <h3>Delete Story?</h3>
+                        <p>
+                            ⚠️ Are you sure you want to delete this story? This
+                            action cannot be undone.
+                        </p>
+                        <div className="modal-buttons">
+                            <button
+                                className="btn delete-btn"
+                                onClick={confirmDelete}
+                            >
+                                Delete
+                            </button>
+                            <button
+                                className="modal-cancel-btn"
+                                onClick={() => setConfirmId(null)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

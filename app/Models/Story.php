@@ -17,6 +17,7 @@ class Story extends Model
         'photos',
         'required_amount',
         'user_id',
+        'status'
     ];
 
     protected $casts = [
