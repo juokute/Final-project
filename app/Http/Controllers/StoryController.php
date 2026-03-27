@@ -96,7 +96,10 @@ class StoryController extends Controller
     {
         if (!Auth::user()?->is_admin) abort(403);
 
-        $stories = Story::with('hashTags')->get();
+        $stories = Story::with(['hashTags', 'user'])
+            ->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected')")
+            ->get();
+
         $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
 
         return Inertia::render('AdminPanel', [
@@ -113,11 +116,19 @@ class StoryController extends Controller
         return redirect()->back()->with('success', 'Story approved!');
     }
 
-    public function rejectStory($id)
+    public function rejectStory(Request $request, $id)
     {
         if (!Auth::user()?->is_admin) abort(403);
 
-        Story::findOrFail($id)->update(['status' => 'rejected']);
+        $request->validate([
+            'message' => 'nullable|string|max:500',
+        ]);
+
+        Story::findOrFail($id)->update([
+            'status' => 'rejected',
+            'admin_comment' => $request->message,
+        ]);
+
         return redirect()->back()->with('success', 'Story rejected!');
     }
 
@@ -221,6 +232,10 @@ class StoryController extends Controller
     {
         $story = \App\Models\Story::findOrFail($id);
         $story->delete();
+
+        if (Auth::user()?->is_admin) {
+            return redirect()->route('admin')->with('success', 'Story deleted!');
+        }
 
         return redirect()->route('home')->with('success', 'Story deleted!');
     }
@@ -393,5 +408,27 @@ class StoryController extends Controller
             ->get();
 
         return response()->json(['donations' => $donations]);
+    }
+
+
+    public function updateStoryTags(Request $request, $id)
+    {
+        if (!Auth::user()?->is_admin) abort(403);
+
+        $request->validate([
+            'hash_tags' => 'required|array|min:1',
+            'hash_tags.*' => 'string|max:50',
+        ]);
+
+        DB::table('hash_tags')->where('story_id', $id)->delete();
+
+        foreach ($request->hash_tags as $tag) {
+            DB::table('hash_tags')->insert([
+                'story_id' => $id,
+                'hash_tag' => $tag,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Tags updated!');
     }
 }

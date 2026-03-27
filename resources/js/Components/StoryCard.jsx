@@ -530,6 +530,15 @@ export default function StoryCard({
                             >
                                 <button
                                     className="modal-cancel-btn"
+                                    style={{
+                                        height: "39px",
+                                        width: "120px",
+                                        borderRadius: "10px",
+                                        fontSize: "18px",
+                                        padding: "0 20px",
+                                        marginTop: "20px",
+                                        borderColor: "#393b83d3",
+                                    }}
                                     onClick={() => setShowTopDonations(false)}
                                 >
                                     Close

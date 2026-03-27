@@ -17,14 +17,6 @@ export default function Authenticated({ header, children }) {
     const hasStory = auth?.hasStory || false;
     const isAdmin = auth?.isAdmin || false;
 
-    // Navigacijoje:
-    {
-        isAdmin && (
-            <NavLink href={route("admin")} active={route().current("admin")}>
-                Admin
-            </NavLink>
-        );
-    }
 
     useEffect(() => {
         if (flash?.success) {
@@ -88,6 +80,14 @@ export default function Authenticated({ header, children }) {
                                             : "Create Your Story"}
                                     </NavLink>
                                 )}
+                                {isAdmin && (
+                                    <NavLink
+                                        href={route("admin")}
+                                        active={route().current("admin")}
+                                    >
+                                        Admin
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -121,12 +121,18 @@ export default function Authenticated({ header, children }) {
 
                                         <Dropdown.Content>
                                             <Dropdown.Link
-                                                href={route("profile.edit")}
+                                                href={
+                                                    user
+                                                        ? route("profile.edit")
+                                                        : "#"
+                                                }
                                             >
                                                 Profile
                                             </Dropdown.Link>
                                             <Dropdown.Link
-                                                href={route("logout")}
+                                                href={
+                                                    user ? route("logout") : "#"
+                                                }
                                                 method="post"
                                                 as="button"
                                             >
@@ -221,14 +227,15 @@ export default function Authenticated({ header, children }) {
                                     {user.email}
                                 </div>
                             </div>
-
                             <div className="mt-3 space-y-1">
-                                <ResponsiveNavLink href={route("profile.edit")}>
+                                <ResponsiveNavLink
+                                    href={user ? route("profile.edit") : "#"}
+                                >
                                     Profile
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     method="post"
-                                    href={route("logout")}
+                                    href={user ? route("logout") : "#"}
                                     as="button"
                                 >
                                     Log Out

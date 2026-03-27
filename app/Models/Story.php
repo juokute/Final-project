@@ -17,7 +17,8 @@ class Story extends Model
         'photos',
         'required_amount',
         'user_id',
-        'status'
+        'status',
+        'admin_comment'
     ];
 
     protected $casts = [
@@ -32,5 +33,10 @@ class Story extends Model
     public function donations()
     {
         return $this->hasMany(Donation::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

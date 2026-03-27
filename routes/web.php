@@ -55,6 +55,12 @@ Route::get('/stories/{id}/donations', [StoryController::class, 'getDonations'])-
 Route::get('/stories/{id}/donations/top', [StoryController::class, 'getTopDonors'])->name('stories.donations.top');
 
 
+Route::middleware('auth')->group(function () {
+    // ... esami route'ai ...
+    Route::put('/stories/{id}/tags', [StoryController::class, 'updateStoryTags'])->name('stories.tags.update');
+});
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -67,6 +73,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/tags', [StoryController::class, 'storeTag'])->name('admin.tags.store');
     Route::delete('/admin/tags', [StoryController::class, 'destroyTag'])->name('admin.tags.destroy');
 });
+
+
+
+
+Route::get('/profile', [ProfileController::class, 'edit'])
+    ->middleware('auth')
+    ->name('profile.edit');
+Route::patch('/profile', [ProfileController::class, 'update'])
+    ->middleware('auth')
+    ->name('profile.update');
+Route::delete('/profile', [ProfileController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('profile.destroy');
 
 
 
