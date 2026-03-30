@@ -12,12 +12,14 @@ export default function MyStory({ story }) {
         pending: { bg: "#fef3c7", color: "#92400e", border: "#fcd34d" },
         approved: { bg: "#d1fae5", color: "#065f46", border: "#6ee7b7" },
         rejected: { bg: "#fee2e2", color: "#7f1d1d", border: "#fca5a5" },
+        fixed: { bg: "#ede9fe", color: "#4c1d95", border: "#a78bfa" }, // ← pridėk
     };
 
     const statusIcons = {
         pending: "⏳",
         approved: "✅",
         rejected: "❌",
+        fixed: "🔧", // ← pridėk
     };
 
     const s = statusColors[story.status];

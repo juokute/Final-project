@@ -59,7 +59,6 @@ class StoryController extends Controller
 
     public function getStories()
     {
-        sleep(2);
         $userId = Auth::id();
         $isAdmin = Auth::user()?->is_admin ?? false;
 
@@ -86,7 +85,10 @@ class StoryController extends Controller
                 ? DB::table('hearts')->where('story_id', $story->id)->where('user_id', $userId)->exists()
                 : false;
             return $story;
-        });
+        })->sortBy(function ($story) {
+            // 0 - dar nesurinko, 1 - surinko
+            return $story->total_donated >= $story->required_amount ? 1 : 0;
+        })->values();
 
         return response()->json(['stories' => $stories, 'status' => 'ok']);
     }
@@ -97,7 +99,7 @@ class StoryController extends Controller
         if (!Auth::user()?->is_admin) abort(403);
 
         $stories = Story::with(['hashTags', 'user'])
-            ->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected')")
+            ->orderByRaw("FIELD(status, 'fixed', 'pending', 'approved', 'rejected')")
             ->get();
 
         $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
@@ -138,7 +140,7 @@ class StoryController extends Controller
 
         $request->validate(['hash_tag' => 'required|string|max:50|unique:hash_tags,hash_tag']);
 
-        DB::table('hash_tags')->insert(['hash_tag' => $request->hash_tag, 'story_id' => 0]);
+        DB::table('hash_tags')->insert(['hash_tag' => $request->hash_tag, 'story_id' => null]);
         return redirect()->back()->with('success', 'Tag created!');
     }
 
@@ -231,6 +233,11 @@ class StoryController extends Controller
     public function destroy($id)
     {
         $story = \App\Models\Story::findOrFail($id);
+
+        if (!Auth::user()?->is_admin && $story->status === 'approved') {
+            return redirect()->back()->with('error', 'Approved stories cannot be deleted.');
+        }
+
         $story->delete();
 
         if (Auth::user()?->is_admin) {
@@ -246,6 +253,10 @@ class StoryController extends Controller
 
         if ($story->user_id !== Auth::id()) {
             abort(403);
+        }
+
+        if ($story->status === 'approved') {
+            return redirect()->route('story')->with('success', 'Approved stories cannot be edited.');
         }
 
         $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
@@ -308,7 +319,15 @@ class StoryController extends Controller
         $story->required_amount = $request->required_amount;
         $story->photos = $photos;
 
+
+
+        if ($story->status === 'rejected') {
+            $story->status = 'fixed';
+            $story->admin_comment = null;
+        }
+
         $story->save();
+
 
         // 🏷️ atnaujinam tagus (ištrinam senus)
         DB::table('hash_tags')->where('story_id', $story->id)->delete();
@@ -319,6 +338,8 @@ class StoryController extends Controller
                 'hash_tag' => $tag,
             ]);
         }
+
+
 
 
 
@@ -431,4 +452,45 @@ class StoryController extends Controller
 
         return redirect()->back()->with('success', 'Tags updated!');
     }
+
+    public function tagsPanel()
+    {
+        if (!Auth::user()?->is_admin) abort(403);
+
+        $tags = HashTag::select('hash_tag')->distinct()->pluck('hash_tag');
+
+        return Inertia::render('AdminTags', [
+            'allTags' => $tags,
+        ]);
+    }
+
+
+    public function dashboard()
+{
+    $totalStories = Story::where('status', 'approved')->count();
+    $totalDonated = DB::table('donations')->sum('donated_amount');
+    $totalDonors = DB::table('donations')->distinct('user_id')->count('user_id');
+
+    $featuredStories = Story::with('hashTags')
+        ->where('status', 'approved')
+        ->get()
+        ->map(function ($story) {
+            $story->total_donated = DB::table('donations')->where('story_id', $story->id)->sum('donated_amount');
+            $story->percent = $story->required_amount > 0
+                ? min(($story->total_donated / $story->required_amount) * 100, 100)
+                : 0;
+            $story->heart_count = DB::table('hearts')->where('story_id', $story->id)->count();
+            return $story;
+        })
+        ->sortByDesc('heart_count')
+        ->take(3)
+        ->values();
+
+    return Inertia::render('Dashboard', [
+        'totalStories' => $totalStories,
+        'totalDonated' => $totalDonated,
+        'totalDonors' => $totalDonors,
+        'featuredStories' => $featuredStories,
+    ]);
+}
 }

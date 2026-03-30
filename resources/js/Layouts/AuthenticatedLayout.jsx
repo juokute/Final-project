@@ -17,7 +17,6 @@ export default function Authenticated({ header, children }) {
     const hasStory = auth?.hasStory || false;
     const isAdmin = auth?.isAdmin || false;
 
-
     useEffect(() => {
         if (flash?.success) {
             setShow(true);
@@ -86,6 +85,14 @@ export default function Authenticated({ header, children }) {
                                         active={route().current("admin")}
                                     >
                                         Admin
+                                    </NavLink>
+                                )}
+                                {isAdmin && (
+                                    <NavLink
+                                        href={route("admin.tags")}
+                                        active={route().current("admin.tags")}
+                                    >
+                                        Manage Tags
                                     </NavLink>
                                 )}
                             </div>

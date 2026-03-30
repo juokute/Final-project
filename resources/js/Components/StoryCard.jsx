@@ -33,7 +33,8 @@ export default function StoryCard({
     const [showDonateConfirm, setShowDonateConfirm] = useState(false);
     const [pendingAmount, setPendingAmount] = useState("");
 
-    const isOwner = user && story.user_id === user.id;
+    const isOwner =
+        user && story.user_id === user.id && story.status !== "approved";
 
     const [showAllDonations, setShowAllDonations] = useState(false);
     const [allDonations, setAllDonations] = useState([]);
@@ -150,6 +151,8 @@ export default function StoryCard({
         }
     };
 
+    const isCompleted = percent >= 100;
+
     return (
         <tr>
             <td className="gallery-container">
@@ -235,10 +238,16 @@ export default function StoryCard({
                                 r="45"
                                 style={{
                                     strokeDashoffset: `calc(283 - (283 * ${percent}) / 100)`,
+                                    stroke: isCompleted ? "#128618" : undefined,
                                 }}
                             />
                         </svg>
-                        <div className="circle-text">
+                        <div
+                            className="circle-text"
+                            style={{
+                                color: isCompleted ? "#0b500e" : undefined,
+                            }}
+                        >
                             {Math.round(percent)}%
                         </div>
                     </div>
@@ -268,8 +277,14 @@ export default function StoryCard({
                     <button
                         className="btn new-story-button-save btn-list donate-btn"
                         onClick={handleDonateClick}
+                        disabled={isCompleted}
+                        style={
+                            isCompleted
+                                ? { opacity: 0.6, cursor: "not-allowed", backgroundColor: "#128618" }
+                                : {}
+                        }
                     >
-                        Donate
+                        {isCompleted ? "Fundraising Completed" : "Donate"}
                     </button>
                 </div>
 
