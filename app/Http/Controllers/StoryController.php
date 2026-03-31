@@ -86,8 +86,7 @@ class StoryController extends Controller
                 : false;
             return $story;
         })->sortBy(function ($story) {
-            // 0 - dar nesurinko, 1 - surinko
-            return $story->total_donated >= $story->required_amount ? 1 : 0;
+            return (float)$story->total_donated >= (float)$story->required_amount ? 1 : 0;
         })->values();
 
         return response()->json(['stories' => $stories, 'status' => 'ok']);

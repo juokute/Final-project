@@ -47,8 +47,14 @@ export default function HelloEntry({ number, entriesUrl }) {
         } else {
             // default – nesurinko viršuje
             result = result.sort((a, b) => {
-                const aCompleted = a.total_donated >= a.required_amount ? 1 : 0;
-                const bCompleted = b.total_donated >= b.required_amount ? 1 : 0;
+                const aCompleted =
+                    Number(a.total_donated) >= Number(a.required_amount)
+                        ? 1
+                        : 0;
+                const bCompleted =
+                    Number(b.total_donated) >= Number(b.required_amount)
+                        ? 1
+                        : 0;
                 return aCompleted - bCompleted;
             });
         }
