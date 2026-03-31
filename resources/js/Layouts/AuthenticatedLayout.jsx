@@ -46,22 +46,63 @@ export default function Authenticated({ header, children }) {
                 </div>
             )}
 
-            <nav className="bg-white border-b border-gray-100">
+            <nav
+                className="bg-white border-b border-gray-100"
+                style={{ width: "1400px" }}
+            >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
+                    <div className="flex justify-between h-16" style={{userSelect: "none",}}>
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                <Link
+                                    href="/"
+                                    style={{ textDecoration: "none" }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "8px",
+                                            
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                width: "36px",
+                                                height: "36px",
+                                                borderRadius: "50%",
+                                                background: "#393b83d3",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                color: "white",
+                                                fontSize: "18px",
+                                                fontWeight: "900",
+                                                
+                                            }}
+                                        >
+                                            ♥
+                                        </div>
+                                        <span
+                                            style={{
+                                                fontSize: "20px",
+                                                fontWeight: "900",
+                                                color: "#393b83d3",
+                                                letterSpacing: "-0.5px",
+                                            }}
+                                        >
+                                            FundHeart
+                                        </span>
+                                    </div>
                                 </Link>
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route("dashboard")}
-                                    active={route().current("dashboard")}
+                                    href={route("welcome")}
+                                    active={route().current("welcome")}
                                 >
-                                    Dashboard
+                                    Home
                                 </NavLink>
                                 <NavLink
                                     href={route("home")}
@@ -217,10 +258,10 @@ export default function Authenticated({ header, children }) {
                 >
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
+                            href={route("welcome")}
+                            active={route().current("welcome")}
                         >
-                            Dashboard
+                            Home
                         </ResponsiveNavLink>
                     </div>
 

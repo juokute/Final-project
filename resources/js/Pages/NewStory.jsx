@@ -98,7 +98,7 @@ export default function NewStory({ storiesUrl }) {
     };
 
     return (
-        <AuthenticatedLayout user={user}>
+        <AuthenticatedLayout user={user} >
             <Head title="Create Your Story!" />
             {loading ? (
                 <div className="loader-container">
@@ -108,8 +108,8 @@ export default function NewStory({ storiesUrl }) {
                 </div>
             ) : (
                 <>
-                    <h1 className="new-story-h1">Create Your Story!</h1>
-                    <div className="new-story-container">
+                    <h1 className="new-story-h1" style={{ background: "none"}}>Create Your Story!</h1>
+                    <div className="new-story-container" >
                         <Str
                             str={str}
                             setStr={setStr}

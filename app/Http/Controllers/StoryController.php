@@ -238,6 +238,17 @@ class StoryController extends Controller
             return redirect()->back()->with('error', 'Approved stories cannot be deleted.');
         }
 
+        // 🗑️ Trinami fiziniai failai
+        if ($story->title_photo) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($story->title_photo);
+        }
+
+        if ($story->photos) {
+            foreach ($story->photos as $photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($photo);
+            }
+        }
+
         $story->delete();
 
         if (Auth::user()?->is_admin) {
@@ -294,6 +305,10 @@ class StoryController extends Controller
 
         // 📸 title photo update
         if ($request->hasFile('title_photo')) {
+            // Ištrink seną
+            if ($story->title_photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($story->title_photo);
+            }
             $story->title_photo = $request->file('title_photo')->store('photos', 'public');
         }
 
@@ -302,6 +317,13 @@ class StoryController extends Controller
 
         if ($request->has('existing_photos')) {
             $existingPhotos = json_decode($request->input('existing_photos'), true) ?? [];
+        }
+
+        // 🗑️ Ištrink pašalintas nuotraukas
+        $oldPhotos = $story->photos ?? [];
+        $removedPhotos = array_diff($oldPhotos, $existingPhotos);
+        foreach ($removedPhotos as $removed) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($removed);
         }
 
         $photos = $existingPhotos;
@@ -325,6 +347,11 @@ class StoryController extends Controller
             $story->status = 'fixed';
             $story->admin_comment = null;
         }
+
+
+
+
+
 
         $story->save();
 
@@ -465,32 +492,32 @@ class StoryController extends Controller
     }
 
 
-    public function dashboard()
-{
-    $totalStories = Story::where('status', 'approved')->count();
-    $totalDonated = DB::table('donations')->sum('donated_amount');
-    $totalDonors = DB::table('donations')->distinct('user_id')->count('user_id');
+    public function welcome()
+    {
+        $totalStories = Story::where('status', 'approved')->count();
+        $totalDonated = DB::table('donations')->sum('donated_amount');
+        $totalDonors = DB::table('donations')->distinct('user_id')->count('user_id');
 
-    $featuredStories = Story::with('hashTags')
-        ->where('status', 'approved')
-        ->get()
-        ->map(function ($story) {
-            $story->total_donated = DB::table('donations')->where('story_id', $story->id)->sum('donated_amount');
-            $story->percent = $story->required_amount > 0
-                ? min(($story->total_donated / $story->required_amount) * 100, 100)
-                : 0;
-            $story->heart_count = DB::table('hearts')->where('story_id', $story->id)->count();
-            return $story;
-        })
-        ->sortByDesc('heart_count')
-        ->take(3)
-        ->values();
+        $featuredStories = Story::with('hashTags')
+            ->where('status', 'approved')
+            ->get()
+            ->map(function ($story) {
+                $story->total_donated = DB::table('donations')->where('story_id', $story->id)->sum('donated_amount');
+                $story->percent = $story->required_amount > 0
+                    ? min(($story->total_donated / $story->required_amount) * 100, 100)
+                    : 0;
+                $story->heart_count = DB::table('hearts')->where('story_id', $story->id)->count();
+                return $story;
+            })
+            ->sortByDesc('heart_count')
+            ->take(3)
+            ->values();
 
-    return Inertia::render('Dashboard', [
-        'totalStories' => $totalStories,
-        'totalDonated' => $totalDonated,
-        'totalDonors' => $totalDonors,
-        'featuredStories' => $featuredStories,
-    ]);
-}
+        return Inertia::render('Welcome', [
+            'totalStories' => $totalStories,
+            'totalDonated' => $totalDonated,
+            'totalDonors' => $totalDonors,
+            'featuredStories' => $featuredStories,
+        ]);
+    }
 }
